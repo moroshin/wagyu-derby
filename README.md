@@ -3,7 +3,7 @@
 みんなで予想して、連打で応援する、パーティー向けの競牛ゲームです。
 
 ## 遊び方
-出走するのは実在の和牛ブランド（みかわ牛・松阪牛・神戸ビーフ・近江牛・米沢牛・飛騨牛）と交雑牛の7頭です。
+出走は毎レース7頭。推し牛の**みかわ牛は毎回出走**し、残り6頭は実在のブランド牛（松阪牛・神戸ビーフ・前沢牛・宮崎牛・石垣牛など）と交雑牛の**39候補からランダム**に選ばれます。前のレースに出た牛はなるべく外れ、枠順・調子・性格づけ（「スタートダッシュが得意」など。ゲーム上の演出で実際の品質とは無関係）も毎回変わります。
 
 1. 参加者の名前を追加し、それぞれ勝つと思う牛（1〜7番）を選ぶ
 2. 「出走！」でレース開始。レース中は自分の牛のボタンを**連打で応援**（少しだけ速くなる）
@@ -12,7 +12,7 @@
 1台のスマホ/PC/プロジェクターをみんなで囲んで遊ぶ想定です。ビルド不要の静的サイトです。
 
 ## みかわ牛はちょっと有利
-`public/race.js` の `COWS` で調整しています。
+`public/race.js` の `MIKAWA` で調整しています。出走候補は同じファイルの `POOL` に追加・削除できます。
 
 | 項目 | みかわ牛 | 他の牛 |
 |---|---|---|
@@ -22,12 +22,12 @@
 | 終盤の末脚 | +1.5% | なし |
 | 「ねむい」調子になる確率 | やや低い | 標準 |
 
-7頭立てで、みかわ牛の勝率は **約28%**（他は各12%前後、平等なら14.3%）。
+7頭立てで、みかわ牛の勝率は **約29%**（他は各12%前後、平等なら14.3%）。
 勝ちやすいけれど、負けることも普通にあるバランスです。
 
 勝率の確認:
 ```bash
-node -e 'const W=require("./public/race.js");let w=0,N=5000;for(let k=0;k<N;k++){const r=W.createRace(W.rollConditions(Math.random),Math.random);while(!r.finished.length)W.step(r,1/60,Math.random);w+=r.finished[0].cow.id==="mikawa"}console.log((100*w/N).toFixed(1)+"%")'
+node -e 'const W=require("./public/race.js");let w=0,N=5000;for(let k=0;k<N;k++){const r=W.createRace(W.rollConditions(Math.random),Math.random);while(!r.finished.length)W.step(r,1/60,Math.random);W.drawField();w+=r.finished[0].cow.id==="mikawa"}console.log((100*w/N).toFixed(1)+"%")'
 ```
 
 ## ローカルで動かす

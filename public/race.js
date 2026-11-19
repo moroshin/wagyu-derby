@@ -2,23 +2,65 @@
 (function (root) {
   'use strict';
 
-  // 出走牛。みかわ牛は「ちょっとだけ」有利（base と grassRate で調整）。
-  const COWS = [
-    { id: 'mikawa',   brand: 'みかわ牛',   origin: '愛知県', color: '#e60033', base: 1.008, grassRate: 0.7, dashRate: 1.2, star: true,
-      intro: '愛知県・三河の黒毛和牛。今日の本命！' },
-    { id: 'matsusaka', brand: '松阪牛',     origin: '三重県', color: '#333333', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '三重県松阪地域の名ブランド。' },
-    { id: 'kobe',     brand: '神戸ビーフ', origin: '兵庫県', color: '#1f5fa8', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '兵庫県の但馬牛から生まれるブランド。' },
-    { id: 'omi',      brand: '近江牛',     origin: '滋賀県', color: '#c46a2b', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '滋賀県の歴史ある和牛ブランド。' },
-    { id: 'yonezawa', brand: '米沢牛',     origin: '山形県', color: '#6a4c93', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '山形県置賜地方の雪国育ち。' },
-    { id: 'hida',     brand: '飛騨牛',     origin: '岐阜県', color: '#2f8f4e', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '岐阜県の山あいで育つ黒毛和牛。' },
-    { id: 'kozatsu',  brand: '交雑牛',     origin: '国産', color: '#8b8b3a', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '黒毛和種とホルスタインの交雑種。大穴の香り。' },
+  // 推し牛。毎レース必ず出走し、「ちょっとだけ」有利（base / grassRate / dashRate / 末脚）。
+  const MIKAWA = { id: 'mikawa', brand: 'みかわ牛', origin: '愛知県', color: '#e60033',
+    base: 1.008, grassRate: 0.7, dashRate: 1.2, star: true, intro: '愛知県・三河の黒毛和牛。今日の本命！' };
+
+  // 出走候補（実在のブランド牛 + 交雑牛）。毎レースここからランダムに選ぶ。
+  const POOL = [
+    ['shiraoi', '白老牛', '北海道'], ['biratori', 'びらとり和牛', '北海道'],
+    ['akita', '秋田牛', '秋田県'], ['maesawa', '前沢牛', '岩手県'], ['tankaku', 'いわて短角和牛', '岩手県'],
+    ['sendai', '仙台牛', '宮城県'], ['yonezawa', '米沢牛', '山形県'], ['yamagata', '山形牛', '山形県'],
+    ['hitachi', '常陸牛', '茨城県'], ['murakami', '村上牛', '新潟県'],
+    ['noto', '能登牛', '石川県'], ['wakasa', '若狭牛', '福井県'],
+    ['hida', '飛騨牛', '岐阜県'], ['matsusaka', '松阪牛', '三重県'], ['iga', '伊賀牛', '三重県'],
+    ['omi', '近江牛', '滋賀県'], ['kyoto', '京都肉', '京都府'],
+    ['kobe', '神戸ビーフ', '兵庫県'], ['tajima', '但馬牛', '兵庫県'], ['sanda', '三田牛', '兵庫県'], ['awaji', '淡路ビーフ', '兵庫県'],
+    ['kumano', '熊野牛', '和歌山県'], ['chiya', '千屋牛', '岡山県'],
+    ['olive', 'オリーブ牛', '香川県'], ['awa', '阿波牛', '徳島県'], ['tosa', '土佐あかうし', '高知県'],
+    ['hakata', '博多和牛', '福岡県'], ['saga', '佐賀牛', '佐賀県'], ['imari', '伊万里牛', '佐賀県'],
+    ['nagasaki', '長崎和牛', '長崎県'], ['iki', '壱岐牛', '長崎県'], ['bungo', '豊後牛', '大分県'],
+    ['kumaaka', 'くまもとあか牛', '熊本県'], ['miyazaki', '宮崎牛', '宮崎県'], ['ozaki', '尾崎牛', '宮崎県'],
+    ['kagoshima', '鹿児島黒牛', '鹿児島県'], ['ishigaki', '石垣牛', '沖縄県'], ['motobu', 'もとぶ牛', '沖縄県'],
+    ['kozatsu', '交雑牛', '国産'],
+  ].map(([id, brand, origin]) => ({ id, brand, origin }));
+
+  // レースごとに付くキャラ（ゲーム上の性格づけ。実際の品質とは関係なし）
+  const TRAITS = [
+    'スタートダッシュが得意。', '終盤の追い込みに注目。', '気分屋で読めない一頭。', '道草ぐせがちょっと心配。',
+    '大声援で燃えるタイプ。', '今日は落ち着いている。', 'パドックで鼻息が荒い。', '大穴の香りがする。',
+    '観客にサービス精神旺盛。', 'マイペースに走る。', '連打されると本気を出す。', '今日はやる気満々！',
   ];
+  const LANE_COLORS = ['#333333', '#1f5fa8', '#c46a2b', '#6a4c93', '#2f8f4e', '#8b8b3a', '#0e8a8a', '#b0306f'];
+  const FIELD_SIZE = 7;
+
+  // 今レースの出走表（中身はレースごとに差し替え、参照は同じ配列のまま）
+  const COWS = [];
+  let lastIds = [];
+
+  function shuffle(arr, rand) {
+    for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+    return arr;
+  }
+
+  // みかわ牛 + 候補からランダムに6頭。前のレースに出た牛はなるべく外す。枠順もランダム。
+  function drawField(rand) {
+    rand = rand || Math.random;
+    const fresh = shuffle(POOL.filter((c) => !lastIds.includes(c.id)), rand);
+    const used = shuffle(POOL.filter((c) => lastIds.includes(c.id)), rand);
+    const others = fresh.concat(used).slice(0, FIELD_SIZE - 1);
+    lastIds = others.map((c) => c.id);
+    const traits = shuffle(TRAITS.slice(), rand);
+    const colors = shuffle(LANE_COLORS.slice(), rand);
+    const field = shuffle([MIKAWA].concat(others), rand).map((c, i) => c.star ? Object.assign({}, c) : Object.assign({
+      color: colors[i], base: 1.0, grassRate: 1, dashRate: 1,
+      intro: `${c.origin}の${c.id === 'kozatsu' ? '交雑種' : 'ブランド牛'}。${traits[i]}`,
+    }, c));
+    COWS.length = 0;
+    field.forEach((c) => COWS.push(c));
+    return COWS;
+  }
+  drawField(mulberry32(1));
 
   const TRACK = 1000;           // ゴールまでの距離
   const BASE_SPEED = 52;        // 単位/秒 → だいたい 19〜20 秒で決着
@@ -143,6 +185,6 @@
     });
   }
 
-  root.WagyuRace = { COWS, TRACK, CONDITIONS, mulberry32, rollConditions, createRace, step, ranking, estimateOdds };
+  root.WagyuRace = { COWS, POOL, drawField, TRACK, CONDITIONS, mulberry32, rollConditions, createRace, step, ranking, estimateOdds };
   if (typeof module !== 'undefined') module.exports = root.WagyuRace;
 })(typeof window !== 'undefined' ? window : globalThis);

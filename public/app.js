@@ -64,6 +64,7 @@
 
   // ---------- 予想画面 ----------
   function prepareRound() {
+    W.drawField(Math.random);
     state.conditions = W.rollConditions(Math.random);
     state.odds = W.estimateOdds(state.conditions, 300);
     $('#roundLabel').textContent = `第${state.round}レース`;
