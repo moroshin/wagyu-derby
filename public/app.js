@@ -117,7 +117,14 @@
 
   $('#startBtn').addEventListener('click', () => {
     const missing = state.players.filter((p) => p.pick === null);
-    if (missing.length && !confirm(`${missing.map((p) => p.name).join('、')} さんがまだ予想していません。このまま出走しますか？`)) return;
+    const btn = $('#startBtn');
+    if (missing.length && !btn.dataset.armed) {
+      btn.dataset.armed = '1';
+      btn.textContent = `${missing.map((p) => p.name).join('、')}さんが未予想。もう一度押すと出走`;
+      setTimeout(() => { delete btn.dataset.armed; btn.textContent = '🏁 出走！'; }, 4000);
+      return;
+    }
+    delete btn.dataset.armed; btn.textContent = '🏁 出走！';
     startRace();
   });
 
@@ -270,6 +277,7 @@
     lastResultText = `🐄 和牛ダービー 第${state.round}レースは ${win.idx + 1}番 ${win.cow.brand}「${win.cow.name}」が優勝！` +
       (win.cow.star ? 'やっぱりみかわ牛は強い！' : `単勝${odds.toFixed(1)}倍の波乱！`) +
       (myHits.length ? ` 的中：${myHits.join('・')}` : '') + ' #和牛ダービー';
+    updateShareLinks();
     renderScoreboard();
     state.round++;
     save();
@@ -303,13 +311,19 @@
     save(); prepareRound(); show('screenBet');
   });
   $('#resetScores').addEventListener('click', () => {
-    if (!confirm('通算ランキングをリセットしますか？')) return;
+    const btn = $('#resetScores');
+    if (!btn.dataset.armed) {
+      btn.dataset.armed = '1'; btn.textContent = 'もう一度押すとリセット';
+      setTimeout(() => { delete btn.dataset.armed; btn.textContent = 'ランキングをリセット'; }, 4000);
+      return;
+    }
+    delete btn.dataset.armed; btn.textContent = 'ランキングをリセット';
     state.scores = {}; state.round = 1; save(); renderScoreboard();
   });
 
 
   // ---------- 共有 ----------
-  const shareUrl = () => location.protocol.startsWith('http') ? location.origin + location.pathname.replace(/index\.html$/, '') : 'https://github.com/moroshin/wagyu-derby';
+  const shareUrl = () => window.WAGYU_SHARE_URL || (location.protocol.startsWith('http') ? location.origin + location.pathname.replace(/index\.html$/, '') : 'https://github.com/moroshin/wagyu-derby');
   let lastResultText = '';
   const inviteText = () => '🐄 和牛ダービーで勝負しよう！みんなで予想して連打で応援するパーティーゲーム #和牛ダービー';
   function toast(msg) {
@@ -328,17 +342,26 @@
     const url = shareUrl();
     const text = kind === 'result' && lastResultText ? lastResultText : inviteText();
     if (how === 'copy') return copy(kind === 'result' ? `${text}\n${url}` : url);
-    if (how === 'line') return window.open('https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text), '_blank', 'noopener');
-    if (how === 'x') return window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
-    if (navigator.share) { try { await navigator.share({ title: '和牛ダービー', text, url }); } catch (e) { /* キャンセル */ } }
-    else copy(`${text}\n${url}`);
+    if (navigator.share) {
+      try { await navigator.share({ title: '和牛ダービー', text, url }); }
+      catch (e) { if (e && e.name !== 'AbortError') copy(`${text}\n${url}`); }
+    } else copy(`${text}\n${url}`);
+  }
+  function updateShareLinks() {
+    const url = shareUrl();
+    document.querySelectorAll('[data-kind]').forEach((box) => {
+      const text = box.dataset.kind === 'result' && lastResultText ? lastResultText : inviteText();
+      box.querySelector('[data-share="line"]').href = 'https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text);
+      box.querySelector('[data-share="x"]').href = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
+    });
   }
   document.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-share]'); if (!b) return;
+    const b = e.target.closest('button[data-share]'); if (!b) return;
     const box = b.closest('[data-kind]');
     doShare(b.dataset.share, box ? box.dataset.kind : 'invite');
   });
   $('#shareUrl').value = shareUrl();
+  updateShareLinks();
 
   renderSound();
   prepareRound();

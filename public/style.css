@@ -159,7 +159,8 @@ footer { text-align: center; font-size: .78rem; color: var(--muted); padding: 16
 .share-url input { flex: 1; min-width: 0; font: inherit; font-size: .85rem; padding: 8px; border: 2px solid var(--line); border-radius: 8px; background: #fbf6ee; color: var(--ink); }
 .share-url button { background: var(--ink); color: #fff; border: 0; border-radius: 8px; padding: 0 14px; font-weight: 700; }
 .share-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.share-btns button { flex: 1; min-width: 70px; border: 0; border-radius: 10px; padding: 10px 6px; font-weight: 800; color: #fff; }
+.share-btns a { text-decoration: none; text-align: center; }
+.share-btns button, .share-btns a { flex: 1; min-width: 70px; border: 0; border-radius: 10px; padding: 10px 6px; font-weight: 800; color: #fff; }
 .s-line { background: #06c755; }
 .s-x { background: #111; }
 .s-native { background: #6b5b4e; }
