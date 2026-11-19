@@ -4,18 +4,20 @@
 
   // 出走牛。みかわ牛は「ちょっとだけ」有利（base と grassRate で調整）。
   const COWS = [
-    { id: 'mikawa',  brand: 'みかわ牛', name: 'ミカワノヒカリ', color: '#e60033', base: 1.008, grassRate: 0.7, dashRate: 1.2, star: true,
-      intro: '愛知・三河の誇り。きめ細かいサシと末脚が武器！' },
-    { id: 'kuro',    brand: '黒毛和牛', name: 'クロゲノカゼ',   color: '#333333', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '黒光りする馬体ならぬ牛体。安定感はピカイチ。' },
-    { id: 'aka',     brand: 'あか牛',   name: 'アカベコダッシュ', color: '#c46a2b', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: 'スタートダッシュが得意。でも気分屋。' },
-    { id: 'tanka',   brand: '短角牛',   name: 'タンカクファイター', color: '#8b5a2b', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '山育ちのスタミナ自慢。坂に強い（坂はない）。' },
-    { id: 'mukaku',  brand: '無角牛',   name: 'ツノナシジェット', color: '#5b6b7a', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: '角がないぶん空気抵抗が少ない…らしい。' },
-    { id: 'wagyu',   brand: '交雑牛',   name: 'ハーフアンドハーフ', color: '#2f8f4e', base: 1.0, grassRate: 1, dashRate: 1,
-      intro: 'いいとこ取りのハイブリッド。大穴の香り。' },
+    { id: 'mikawa',   brand: 'みかわ牛',   origin: '愛知県', color: '#e60033', base: 1.008, grassRate: 0.7, dashRate: 1.2, star: true,
+      intro: '愛知県・三河の黒毛和牛。今日の本命！' },
+    { id: 'matsusaka', brand: '松阪牛',     origin: '三重県', color: '#333333', base: 1.0, grassRate: 1, dashRate: 1,
+      intro: '三重県松阪地域の名ブランド。' },
+    { id: 'kobe',     brand: '神戸ビーフ', origin: '兵庫県', color: '#1f5fa8', base: 1.0, grassRate: 1, dashRate: 1,
+      intro: '兵庫県の但馬牛から生まれるブランド。' },
+    { id: 'omi',      brand: '近江牛',     origin: '滋賀県', color: '#c46a2b', base: 1.0, grassRate: 1, dashRate: 1,
+      intro: '滋賀県の歴史ある和牛ブランド。' },
+    { id: 'yonezawa', brand: '米沢牛',     origin: '山形県', color: '#6a4c93', base: 1.0, grassRate: 1, dashRate: 1,
+      intro: '山形県置賜地方の雪国育ち。' },
+    { id: 'hida',     brand: '飛騨牛',     origin: '岐阜県', color: '#2f8f4e', base: 1.0, grassRate: 1, dashRate: 1,
+      intro: '岐阜県の山あいで育つ黒毛和牛。' },
+    { id: 'kozatsu',  brand: '交雑牛',     origin: '国産', color: '#8b8b3a', base: 1.0, grassRate: 1, dashRate: 1,
+      intro: '黒毛和種とホルスタインの交雑種。大穴の香り。' },
   ];
 
   const TRACK = 1000;           // ゴールまでの距離

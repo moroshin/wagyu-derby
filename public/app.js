@@ -76,8 +76,8 @@
     $('#cowCards').innerHTML = W.COWS.map((c, i) => `
       <div class="cow-card ${c.star ? 'star' : ''}" style="--c:${c.color}">
         <div class="num">${i + 1}</div>
-        <div class="brand">${esc(c.brand)} ${c.star ? '<span class="badge">推し牛</span>' : ''}</div>
-        <div class="name">${esc(c.name)}</div>
+        <div class="brand">${esc(c.origin)} ${c.star ? '<span class="badge">推し牛</span>' : ''}</div>
+        <div class="name">${esc(c.brand)}</div>
         <div class="intro">${esc(c.intro)}</div>
         <div class="meta"><span class="odds">${state.odds[i].toFixed(1)}倍</span><span class="cond">調子：${state.conditions[i].label}</span></div>
       </div>`).join('');
@@ -175,7 +175,7 @@
     for (const ev of events) {
       const r = ev.r;
       if (ev.type === 'finish') {
-        if (ev.place === 1) { say(`ゴーーール！！ 1着は ${label(r)} 「${r.cow.name}」！${r.cow.star ? ' さすがみかわ牛！！' : ''}`, true); sfx.fanfare(); }
+        if (ev.place === 1) { say(`ゴーーール！！ 1着は ${label(r)}（${r.cow.origin}）！${r.cow.star ? ' さすがみかわ牛！！' : ''}`, true); sfx.fanfare(); }
         continue;
       }
       if (ev.type === 'grass') say(`おっと ${label(r)}、道草を食べ始めたーっ！🌱`);
@@ -255,12 +255,12 @@
     banner.innerHTML = `
       <div class="big-cow">🐄</div>
       <div class="w1">第${state.round}レース 優勝</div>
-      <div class="w2">${win.idx + 1}番 ${esc(win.cow.brand)}「${esc(win.cow.name)}」</div>
+      <div class="w2">${win.idx + 1}番 ${esc(win.cow.brand)}</div>
       <div class="w3">${win.cow.star ? 'やっぱり強い！みかわ牛！！🎉' : `大波乱！単勝 ${odds.toFixed(1)}倍！`}</div>`;
 
     $('#resultList').innerHTML = fin.map((r, i) => `
       <li style="--c:${r.cow.color}"><span class="place">${['🥇', '🥈', '🥉'][i] || (i + 1) + '着'}</span>
-        <span>${r.idx + 1}番 <b>${esc(r.cow.brand)}</b> ${esc(r.cow.name)}</span>
+        <span>${r.idx + 1}番 <b>${esc(r.cow.brand)}</b> <small>${esc(r.cow.origin)}</small></span>
         <span class="time">${r.finishTime.toFixed(2)}秒</span></li>`).join('');
 
     const payouts = state.players.map((p) => {
@@ -274,7 +274,7 @@
       : '<li class="hint">参加者なし（観戦モード）</li>';
 
     const myHits = payouts.filter((x) => x.hit).map((x) => x.p.name);
-    lastResultText = `🐄 和牛ダービー 第${state.round}レースは ${win.idx + 1}番 ${win.cow.brand}「${win.cow.name}」が優勝！` +
+    lastResultText = `🐄 和牛ダービー 第${state.round}レースは ${win.idx + 1}番 ${win.cow.brand}が優勝！` +
       (win.cow.star ? 'やっぱりみかわ牛は強い！' : `単勝${odds.toFixed(1)}倍の波乱！`) +
       (myHits.length ? ` 的中：${myHits.join('・')}` : '') + ' #和牛ダービー';
     updateShareLinks();
