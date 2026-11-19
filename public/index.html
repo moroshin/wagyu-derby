@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>和牛ダービー</title>
+<meta name="description" content="みんなで予想して、みんなで応援！和牛たちが駆け抜けるパーティー競牛ゲーム。">
+<meta property="og:title" content="和牛ダービー">
+<meta property="og:description" content="みんなで予想して、連打で応援！和牛たちのパーティー競牛ゲーム。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐄</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>🐄 和牛ダービー <small>WAGYU DERBY</small></h1>
+  <button id="soundBtn" class="ghost" aria-label="サウンド切り替え">🔊</button>
+</header>
+
+<main>
+  <!-- 1. 予想 -->
+  <section id="screenBet" class="screen active">
+    <div class="race-title">
+      <span class="round" id="roundLabel">第1レース</span>
+      <span id="raceName">三河ステークス</span>
+    </div>
+
+    <div class="cows" id="cowCards"></div>
+
+    <div class="panel">
+      <h2>参加者と予想</h2>
+      <p class="hint">名前を入れて、勝つと思う牛を選んでね。当たったらオッズ×100ポイント！</p>
+      <form id="addPlayer" class="add-player">
+        <input id="playerName" maxlength="10" placeholder="なまえ" autocomplete="off">
+        <button type="submit">追加</button>
+      </form>
+      <ul id="playerList" class="players"></ul>
+    </div>
+
+    <button id="startBtn" class="big">🏁 出走！</button>
+  </section>
+
+  <!-- 2. レース -->
+  <section id="screenRace" class="screen">
+    <div class="track-wrap">
+      <div id="countdown" class="countdown"></div>
+      <div id="track" class="track"></div>
+    </div>
+    <div id="commentary" class="commentary">各牛、ゲートに入りました…</div>
+    <p class="hint center">👇 自分の牛のボタンを連打して応援！（応援でちょっと速くなる）</p>
+    <div id="cheerBtns" class="cheer-btns"></div>
+  </section>
+
+  <!-- 3. 結果 -->
+  <section id="screenResult" class="screen">
+    <div id="winnerBanner" class="winner-banner"></div>
+    <ol id="resultList" class="result-list"></ol>
+    <div class="panel">
+      <h2>今回の払い戻し</h2>
+      <ul id="payoutList" class="payouts"></ul>
+    </div>
+    <div class="panel">
+      <h2>🏆 通算ランキング</h2>
+      <ol id="scoreboard" class="scoreboard"></ol>
+      <button id="resetScores" class="ghost small">ランキングをリセット</button>
+    </div>
+    <button id="nextBtn" class="big">次のレースへ ▶</button>
+  </section>
+</main>
+
+<footer>みんなでワイワイ遊べる競牛ゲーム ・ 推し牛：<b>みかわ牛</b></footer>
+
+<script src="race.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

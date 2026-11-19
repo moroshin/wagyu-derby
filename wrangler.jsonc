@@ -1,0 +1,9 @@
+{
+  // 和牛ダービーを Cloudflare Workers（静的アセット）で配信する設定
+  // デプロイ: npx wrangler deploy
+  "name": "wagyu-derby",
+  "compatibility_date": "2026-08-03",
+  "assets": {
+    "directory": "./public"
+  }
+}

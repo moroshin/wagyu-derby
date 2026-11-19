@@ -1,0 +1,155 @@
+:root {
+  --bg: #fff8ec;
+  --card: #ffffff;
+  --ink: #2a1d14;
+  --muted: #7b6a5c;
+  --accent: #e60033;
+  --gold: #e8a400;
+  --turf: #3f9b45;
+  --turf2: #4aa851;
+  --line: #eadfcd;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; cursor: pointer; }
+
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #2a1d14, #5a2a14);
+  color: #fff;
+}
+.top h1 { margin: 0; font-size: 1.35rem; letter-spacing: .04em; }
+.top small { font-size: .65rem; opacity: .7; margin-left: 4px; }
+.ghost { background: transparent; border: 1px solid currentColor; color: inherit; border-radius: 8px; padding: 4px 10px; }
+.ghost.small { font-size: .8rem; margin-top: 8px; color: var(--muted); }
+
+main { max-width: 860px; margin: 0 auto; padding: 12px 16px 24px; }
+.screen { display: none; }
+.screen.active { display: block; animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; } }
+
+.race-title { text-align: center; margin: 6px 0 12px; font-weight: 800; font-size: 1.3rem; }
+.round { display: inline-block; background: var(--accent); color: #fff; font-size: .8rem; padding: 2px 10px; border-radius: 99px; margin-right: 6px; vertical-align: middle; }
+
+.cows { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.cow-card {
+  background: var(--card); border: 2px solid var(--line); border-left: 8px solid var(--c);
+  border-radius: 12px; padding: 10px 12px; position: relative;
+}
+.cow-card.star { border-color: var(--accent); box-shadow: 0 0 0 3px #ffd6de; }
+.cow-card .num { position: absolute; top: 8px; right: 10px; font-weight: 900; font-size: 1.4rem; color: var(--c); opacity: .9; }
+.cow-card .brand { font-size: .78rem; color: var(--muted); }
+.cow-card .name { font-weight: 800; font-size: 1.05rem; }
+.cow-card .intro { font-size: .8rem; color: var(--muted); margin: 4px 0 6px; }
+.cow-card .meta { display: flex; gap: 8px; font-size: .85rem; align-items: center; flex-wrap: wrap; }
+.odds { font-weight: 900; color: var(--accent); font-size: 1.1rem; }
+.cond { background: #f4ecdf; border-radius: 6px; padding: 1px 6px; }
+.badge { background: var(--accent); color: #fff; font-size: .7rem; padding: 1px 6px; border-radius: 6px; font-weight: 700; }
+
+.panel { background: var(--card); border: 2px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 14px; }
+.panel h2 { margin: 0 0 4px; font-size: 1.05rem; }
+.hint { font-size: .82rem; color: var(--muted); margin: 4px 0 8px; }
+.hint.center { text-align: center; }
+
+.add-player { display: flex; gap: 8px; }
+.add-player input { flex: 1; min-width: 0; font: inherit; padding: 10px; border: 2px solid var(--line); border-radius: 8px; }
+.add-player button { background: var(--ink); color: #fff; border: 0; border-radius: 8px; padding: 0 16px; font-weight: 700; }
+
+.players { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 8px; }
+.players li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px; background: #fbf6ee; border-radius: 10px; }
+.players .pname { font-weight: 800; min-width: 4.5em; }
+.players .picks { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.pick {
+  width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--c); background: #fff; color: var(--c);
+  font-weight: 900;
+}
+.pick.on { background: var(--c); color: #fff; transform: scale(1.08); }
+.del { background: none; border: 0; color: var(--muted); font-size: 1.1rem; }
+
+.big {
+  display: block; width: 100%; margin-top: 16px; padding: 16px; font-size: 1.3rem; font-weight: 900;
+  color: #fff; background: linear-gradient(180deg, #ff3355, #c4002b); border: 0; border-radius: 14px;
+  box-shadow: 0 4px 0 #8a001e; letter-spacing: .05em;
+}
+.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a001e; }
+
+/* ===== レース ===== */
+.track-wrap { position: relative; border-radius: 14px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 2px 10px #0002; }
+.track { position: relative; background: repeating-linear-gradient(90deg, var(--turf) 0 40px, var(--turf2) 40px 80px); padding: 6px 0; }
+.lane { position: relative; height: 52px; border-bottom: 2px dashed #ffffff66; }
+.lane:last-child { border-bottom: 0; }
+.lane .lane-num {
+  position: absolute; left: 4px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%;
+  background: var(--c); color: #fff; font-size: .75rem; font-weight: 900; display: grid; place-items: center; z-index: 1;
+}
+.goal { position: absolute; top: 0; bottom: 0; right: 34px; width: 10px;
+  background: repeating-linear-gradient(0deg, #fff 0 10px, #222 10px 20px); opacity: .9; }
+.runner { position: absolute; top: 50%; left: 30px; transform: translate(-50%, -50%); will-change: left; text-align: center; }
+.runner .cow { font-size: 34px; display: inline-block; transform: scaleX(-1); line-height: 1; }
+.runner.running .cow { animation: gallop .28s infinite alternate; }
+.runner.dash .cow { animation-duration: .14s; filter: drop-shadow(0 0 6px #ffeb3b); }
+.runner.grass .cow { animation: none; transform: scaleX(-1) rotate(18deg) translateY(4px); }
+.runner .tag { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: .7rem; font-weight: 900;
+  background: var(--c); color: #fff; padding: 0 5px; border-radius: 6px; white-space: nowrap; }
+.runner .fx { position: absolute; left: -22px; top: -4px; font-size: 18px; }
+@keyframes gallop { from { transform: scaleX(-1) translateY(0) rotate(-4deg); } to { transform: scaleX(-1) translateY(-6px) rotate(4deg); } }
+
+.countdown { position: absolute; inset: 0; display: none; place-items: center; z-index: 5; font-size: 5rem; font-weight: 900; color: #fff;
+  text-shadow: 0 4px 0 #0005; background: #0003; }
+.countdown.show { display: grid; animation: pop .5s ease; }
+@keyframes pop { from { transform: scale(1.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.commentary {
+  margin-top: 10px; background: #2a1d14; color: #ffe9b0; border-radius: 10px; padding: 10px 12px; min-height: 2.8em;
+  font-weight: 700; font-size: 1rem;
+}
+.cheer-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cheer {
+  border: 0; border-radius: 12px; padding: 12px 4px; background: var(--c); color: #fff; font-weight: 900; font-size: .95rem;
+  box-shadow: 0 4px 0 #0004; user-select: none; touch-action: manipulation;
+}
+.cheer small { display: block; font-size: .7rem; opacity: .85; font-weight: 700; }
+.cheer:active { transform: translateY(3px); box-shadow: 0 1px 0 #0004; }
+.floaty { position: fixed; pointer-events: none; font-weight: 900; color: var(--accent); animation: up .7s ease-out forwards; z-index: 10; }
+@keyframes up { to { transform: translateY(-50px); opacity: 0; } }
+
+/* ===== 結果 ===== */
+.winner-banner { text-align: center; padding: 18px 10px; border-radius: 14px; color: #fff; background: var(--c, #333); margin-top: 4px; }
+.winner-banner .big-cow { font-size: 70px; display: inline-block; transform: scaleX(-1); animation: gallop .3s infinite alternate; }
+.winner-banner .w1 { font-size: .9rem; opacity: .9; }
+.winner-banner .w2 { font-size: 1.6rem; font-weight: 900; }
+.winner-banner .w3 { font-size: .9rem; margin-top: 4px; }
+.result-list { padding: 0; list-style: none; margin: 12px 0 0; display: grid; gap: 6px; }
+.result-list li { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 10px; padding: 8px 12px; border-left: 6px solid var(--c); }
+.result-list .place { font-weight: 900; font-size: 1.2rem; width: 2.2em; }
+.result-list .time { margin-left: auto; color: var(--muted); font-size: .85rem; }
+.payouts, .scoreboard { margin: 6px 0 0; padding-left: 1.4em; }
+.payouts { list-style: none; padding: 0; }
+.payouts li, .scoreboard li { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.payouts .hit { color: var(--accent); font-weight: 900; }
+.scoreboard li:first-child { font-weight: 900; color: var(--gold); }
+.scoreboard .pts { float: right; font-weight: 800; }
+
+footer { text-align: center; font-size: .78rem; color: var(--muted); padding: 16px; }
+
+.confetti { position: fixed; top: -20px; width: 10px; height: 14px; z-index: 20; pointer-events: none; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+@media (max-width: 520px) {
+  .lane { height: 44px; }
+  .runner .cow { font-size: 28px; }
+  .top h1 { font-size: 1.1rem; }
+}
+.result-list .time { white-space: nowrap; }
+@media (max-width: 520px) {
+  .pick { width: 32px; height: 32px; font-size: .85rem; }
+  .players .pname { min-width: 100%; }
+}

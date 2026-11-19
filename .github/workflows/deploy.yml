@@ -1,0 +1,29 @@
+name: Deploy to Cloudflare
+
+# public/ を Cloudflare Workers（静的アセット）へデプロイする。
+# 必要なリポジトリシークレット:
+#   CLOUDFLARE_API_TOKEN  … Cloudflare → My Profile → API Tokens → テンプレート「Edit Cloudflare Workers」
+#   CLOUDFLARE_ACCOUNT_ID … ダッシュボードURLの /accounts/<この部分>
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'public/**'
+      - 'wrangler.jsonc'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
