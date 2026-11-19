@@ -153,3 +153,17 @@ footer { text-align: center; font-size: .78rem; color: var(--muted); padding: 16
   .pick { width: 32px; height: 32px; font-size: .85rem; }
   .players .pname { min-width: 100%; }
 }
+
+/* ===== 共有 ===== */
+.share-url { display: flex; gap: 8px; margin: 6px 0 8px; }
+.share-url input { flex: 1; min-width: 0; font: inherit; font-size: .85rem; padding: 8px; border: 2px solid var(--line); border-radius: 8px; background: #fbf6ee; color: var(--ink); }
+.share-url button { background: var(--ink); color: #fff; border: 0; border-radius: 8px; padding: 0 14px; font-weight: 700; }
+.share-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-btns button { flex: 1; min-width: 70px; border: 0; border-radius: 10px; padding: 10px 6px; font-weight: 800; color: #fff; }
+.s-line { background: #06c755; }
+.s-x { background: #111; }
+.s-native { background: #6b5b4e; }
+.s-copy { background: #a08a74; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: #2a1d14; color: #fff; padding: 10px 18px;
+  border-radius: 99px; font-weight: 700; opacity: 0; transition: .25s; pointer-events: none; z-index: 30; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }

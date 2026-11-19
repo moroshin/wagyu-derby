@@ -38,3 +38,9 @@ npx wrangler deploy
 ```
 `https://wagyu-derby.<サブドメイン>.workers.dev` で公開されます。
 GitHub Actions（`.github/workflows/deploy.yml`）でも自動デプロイできます。
+
+## 共有
+- 予想画面の「📣 友だちにも教える」：URLのコピー、LINE、X、スマホの共有メニュー
+- 結果画面の「📣 結果をシェア」：「第◯レースは◯◯が優勝！的中：◯◯」という文とURLを共有
+- SNSのプレビュー画像は `public/og.png`（1200×630）。`index.html` の `og:image` / `twitter:image` は絶対URLが必要なので、
+  いまはGitHub上の画像を指しています。Cloudflareの公開URLが決まったらそちらに差し替えると確実です。

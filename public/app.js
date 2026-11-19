@@ -266,6 +266,10 @@
       ? payouts.map(({ p, hit, pts }) => `<li class="${hit ? 'hit' : ''}">${esc(p.name)}：${p.pick === null ? '予想なし' : (p.pick + 1) + '番 ' + esc(W.COWS[p.pick].brand)} → ${hit ? `🎯 的中！ +${pts}pt` : 'はずれ'}</li>`).join('')
       : '<li class="hint">参加者なし（観戦モード）</li>';
 
+    const myHits = payouts.filter((x) => x.hit).map((x) => x.p.name);
+    lastResultText = `🐄 和牛ダービー 第${state.round}レースは ${win.idx + 1}番 ${win.cow.brand}「${win.cow.name}」が優勝！` +
+      (win.cow.star ? 'やっぱりみかわ牛は強い！' : `単勝${odds.toFixed(1)}倍の波乱！`) +
+      (myHits.length ? ` 的中：${myHits.join('・')}` : '') + ' #和牛ダービー';
     renderScoreboard();
     state.round++;
     save();
@@ -302,6 +306,39 @@
     if (!confirm('通算ランキングをリセットしますか？')) return;
     state.scores = {}; state.round = 1; save(); renderScoreboard();
   });
+
+
+  // ---------- 共有 ----------
+  const shareUrl = () => location.protocol.startsWith('http') ? location.origin + location.pathname.replace(/index\.html$/, '') : 'https://github.com/moroshin/wagyu-derby';
+  let lastResultText = '';
+  const inviteText = () => '🐄 和牛ダービーで勝負しよう！みんなで予想して連打で応援するパーティーゲーム #和牛ダービー';
+  function toast(msg) {
+    const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) {
+      const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e2) { /* noop */ } ta.remove();
+    }
+    toast('リンクをコピーしました');
+  }
+  async function doShare(how, kind) {
+    const url = shareUrl();
+    const text = kind === 'result' && lastResultText ? lastResultText : inviteText();
+    if (how === 'copy') return copy(kind === 'result' ? `${text}\n${url}` : url);
+    if (how === 'line') return window.open('https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(text), '_blank', 'noopener');
+    if (how === 'x') return window.open('https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+    if (navigator.share) { try { await navigator.share({ title: '和牛ダービー', text, url }); } catch (e) { /* キャンセル */ } }
+    else copy(`${text}\n${url}`);
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-share]'); if (!b) return;
+    const box = b.closest('[data-kind]');
+    doShare(b.dataset.share, box ? box.dataset.kind : 'invite');
+  });
+  $('#shareUrl').value = shareUrl();
 
   renderSound();
   prepareRound();
